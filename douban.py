@@ -47,13 +47,10 @@ class PrivateFM(object):
         if config.has_option("DEFAULT","passwd"):
             self.password = config.get("DEFAULT","passwd").strip()
         else:
-            # todo 听说有个可以显示*的
             import getpass
             self.password = getpass.getpass("请输入豆瓣登录密码：")
             config.set("DEFAULT","passwd",self.password)
         
-        config.write(open("doubanfm.config","w+"))
-
     def remember_cookie(self):
         return 'dbcl2' in self.cookie and 'bid' in self.cookie
 
