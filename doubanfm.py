@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys, os, time, thread, glib, gobject, re
-import pickle, ConfigParser
+import sys, time, thread, glib, gobject
+import ConfigParser
 import pygst
 pygst.require("0.10")
-import gst, json, urllib, urllib2, httplib, contextlib, random, binascii
+import gst, json, urllib, urllib2
 from select import select
-from Cookie import SimpleCookie
-from contextlib import closing
 import douban
 
 class DoubanFM_CLI:

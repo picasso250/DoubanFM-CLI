@@ -3,14 +3,11 @@
 
 # this file should rename to douban_fm_lib.py and should only have net functions
 
-import sys, os, time, thread, glib, gobject, datetime
+import sys, os, time, thread
 import pickle
-import pygst
-pygst.require("0.10")
-import gst, json, urllib, httplib, contextlib, random, binascii, calendar
-from select import select
+import json, urllib, httplib, contextlib, random, binascii, calendar
 from Cookie import SimpleCookie
-from contextlib import closing 
+from contextlib import closing
 from dateutil import parser
 from ConfigParser import SafeConfigParser
 
