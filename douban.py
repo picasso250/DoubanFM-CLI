@@ -79,7 +79,9 @@ class PrivateFM(object):
         data['captcha_solution'] = captcha
         data = urllib.urlencode(data)
 
-        print 'Login ...'
+        print 'Login ...\r',
+        sys.stdout.flush()
+
         with closing(self.get_fm_conn()) as conn:
             headers = self.get_headers_for_request({
                 'Origin': 'http://douban.fm',
@@ -223,7 +225,9 @@ class PrivateFM(object):
             return result
 
     def playlist(self):
-        print 'Fetching playlist ...'
+        print 'Fetching playlist ...\r',
+        sys.stdout.flush()
+
         params = self.get_params('n')
         result = self.communicate(params)
         result = json.loads(result)
