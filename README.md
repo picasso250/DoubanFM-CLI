@@ -48,12 +48,9 @@ passwd=xxx; 登录密码
 - `python-gst` ，如debian系需要 `sudo apt-get install python-gst0.10`
 - `Python Imaging Library` ，如debian系 `sudo apt-get install python-imaging`
 - `python-dateutil` ，如debian系 `sudo apt-get install python-dateutil`
-<<<<<<< HEAD
 - `imagemagick` 如debian系 `sudo apt-get install imagemagick`
-=======
 - `gstreamer0.10-plugins`
 - `gstreamer0.10-plugins-ugly`
->>>>>>> zhen/master
 
 **其他**
 
