@@ -129,7 +129,6 @@ class PrivateFM(object):
                 img = Image.open(f)
                 img.show();
 
-
     def get_headers_for_request(self, extra = {}):
         headers = {
             'Connection': 'keep-alive',
