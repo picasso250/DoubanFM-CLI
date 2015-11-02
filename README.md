@@ -7,7 +7,7 @@
 执行
 
 ```
-python export-fav-list.py
+python download-fav.py
 ```
 
 就会将红心歌曲下载到工作目录下的文件夹 `songs` 中。
