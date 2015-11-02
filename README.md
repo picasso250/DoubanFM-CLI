@@ -22,7 +22,8 @@ python download-fav.py
 
 每首歌都有源信息JSON文件。
 
-**用法:**
+在线听歌的用法
+---------------------------
 
 `python doubanfm.py`
 
