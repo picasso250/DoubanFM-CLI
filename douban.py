@@ -3,17 +3,23 @@
 
 # this file should rename to douban_fm_lib.py and should only have net functions
 
-import sys, os, time, thread
+import sys, os
+import time
+import thread
 import pickle
+import webbrowser
 import json, urllib, httplib, contextlib, random, binascii, calendar
 from Cookie import SimpleCookie
 from contextlib import closing
-from dateutil import parser
 from ConfigParser import SafeConfigParser
 
 class PrivateFM(object):
-    def __init__ (self, channel):
-        self.cache = Cache()
+    def __init__ (self, channel, is_show = True, use_cache = True, use_webbrowser = False):
+        self.is_show = is_show
+        self.use_cache = use_cache
+        self.use_webbrowser = use_webbrowser
+        if use_cache:
+            self.cache = Cache()
         self.channel = channel
         # todo remove this var
         self.dbcl2 = None
@@ -22,8 +28,9 @@ class PrivateFM(object):
 
     def init_cookie(self):
         self.cookie = {}
-        cookie = self.cache.get('cookie', {})
-        self.merge_cookie(cookie)
+        if self.use_cache:
+            cookie = self.cache.get('cookie', {})
+            self.merge_cookie(cookie)
     
     def login(self):
         if self.remember_cookie():
@@ -60,7 +67,7 @@ class PrivateFM(object):
         self.bid = self.cookie['bid'].value
 
     def login_from_net(self, username, password):
-        print u'正在登录...'
+        print '正在登录...'
         data = {
                 'source': 'radio',
                 'alias': username, 
@@ -92,7 +99,7 @@ class PrivateFM(object):
                 cookie = SimpleCookie(set_cookie)
                 self.save_cookie(cookie)
 
-            body = response.read();
+            body = response.read()
             body = json.loads(body)
             if body['r'] != 0:
                 print 'login failed'
@@ -105,6 +112,7 @@ class PrivateFM(object):
             print '累计收听'+str(play_record['played'])+'首',
             print '加红心'+str(play_record['liked'])+'首',
             print '收藏兆赫'+str(play_record['fav_chls_count'])+'个'
+            self.liked = play_record['liked']
             self.login_from_cookie()
 
     def get_captcha_solution(self, captcha_id):
@@ -118,25 +126,28 @@ class PrivateFM(object):
     def show_captcha_image(self, captcha_id):
         with closing(self.get_fm_conn()) as conn:
             path = "/misc/captcha?size=m&id=" + captcha_id
+            print 'http://douban.fm'+path
+            if self.use_webbrowser:
+                webbrowser.open('http://douban.fm'+path)
+            else:
+                import cStringIO
 
-            import cStringIO
+                headers = self.get_headers_for_request()
 
-            headers = self.get_headers_for_request()
+                conn.request("GET", path, None, headers)
+                response = conn.getresponse()
 
-            conn.request("GET", path, None, headers)
-            response = conn.getresponse()
+                set_cookie = response.getheader('Set-Cookie')
+                if not set_cookie is None:
+                    cookie = SimpleCookie(set_cookie)
+                    self.save_cookie(cookie)
 
-            set_cookie = response.getheader('Set-Cookie')
-            if not set_cookie is None:
-                cookie = SimpleCookie(set_cookie)
-                self.save_cookie(cookie)
-
-            if response.status == 200:
-                body = response.read()
-                from PIL import Image
-                f = cStringIO.StringIO(body)
-                img = Image.open(f)
-                img.show();
+                if response.status == 200:
+                    body = response.read()
+                    from PIL import Image
+                    f = cStringIO.StringIO(body)
+                    img = Image.open(f)
+                    img.show();
 
     def get_headers_for_request(self, extra = {}):
         headers = {
@@ -160,6 +171,7 @@ class PrivateFM(object):
             headers = self.get_headers_for_request()
 
             conn.request("GET", path, None, headers)
+
             response = conn.getresponse()
 
             set_cookie = response.getheader('Set-Cookie')
@@ -177,7 +189,8 @@ class PrivateFM(object):
 
     def save_cookie(self, cookie):
         self.merge_cookie(cookie)
-        self.cache.set('cookie', self.cookie)
+        if self.use_cache:
+            self.cache.set('cookie', self.cookie)
 
     # maybe we should extract a class XcCookie(SimpleCookie)
     # merge(SimpleCookie)
@@ -185,8 +198,9 @@ class PrivateFM(object):
         for key in cookie:
             expires = cookie[key]['expires']
             if expires:
-                expires = parser.parse(expires)
-                expires = calendar.timegm(expires.utctimetuple())
+                print expires
+                ts = time.strptime('Tue, 01-Nov-2016 07:17:35 GMT', '%a, %d-%b-%Y %H:%M:%S %Z')
+                expires = time.mktime(ts)
                 now = time.time()
                 if expires > now:
                     self.cookie[key] = cookie[key]
