@@ -18,6 +18,8 @@ python export-fav-list.py
 
 基本上具有断点续传功能……
 
+每首歌都有源信息JSON文件。
+
 **用法:**
 
 `python doubanfm.py`
